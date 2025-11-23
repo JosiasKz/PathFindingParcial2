@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
 
     public void SetPos(Vector3 pos)
     {
-        pos.z =transform.position.z;
+        //pos.z =transform.position.z;
         transform.position = pos;
     }
     public void SetPath(List<Node>p)
@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
             if (_path.Count > 0)
             {
                 Vector3 dir = _path[0].transform.position - transform.position;
-                dir.z = 0;
+                //dir.z = 0;
                 transform.position += dir.normalized * Time.deltaTime * _speed;
 
                 if (dir.magnitude < 0.1f)
