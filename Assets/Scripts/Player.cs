@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     public void SetPath(List<Node>p)
     {
         _path = p;
+        _path.Reverse();
     }
 
     // Update is called once per frame
@@ -23,8 +24,10 @@ public class Player : MonoBehaviour
     {
         try
         {
+            
             if (_path.Count > 0)
             {
+                
                 Vector3 dir = _path[0].transform.position - transform.position;
                 //dir.z = 0;
                 transform.position += dir.normalized * Time.deltaTime * _speed;
@@ -33,6 +36,7 @@ public class Player : MonoBehaviour
                 {
                     _path.RemoveAt(0);
                 }
+                Debug.Log(_path.Count);
 
             }
         }
