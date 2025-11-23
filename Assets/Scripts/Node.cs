@@ -33,21 +33,21 @@ public class Node : MonoBehaviour
     public List<Node> GetNeightbours()
     {
         //Si la lista ya está populada, la devolvemos tal cual está sin hacer ninguna busqueda
-        if (_neighbours.Count > 0) return _neighbours;
+        //if (_neighbours.Count > 0) return _neighbours;
 
 
         //La grilla(grid) tiene una función llamada GetNode la cual devuelve un nodo dandole la posición indicada
         //Esta, GetNeighbours, lo que hace es decirle a la grilla que le devuelva 4 nodos teniendo en cuenta la posicion actual
         //Es decir, este nodo eta en la posición central, por lo tanto le va a pedir sus vecinos de arriba, abajo, izquieda y derecha
         //Cada nodo tendria su lista con sus potenciales 4 vecinos
-        Node neighbour = _grid.GetNode(_x, _y + 1);//Arriba
-        if (neighbour != null) _neighbours.Add(neighbour);
-        neighbour = _grid.GetNode(_x - 1, _y);//Izquierda
-        if (neighbour != null) _neighbours.Add(neighbour);
-        neighbour = _grid.GetNode(_x, _y - 1);//Abajo
-        if (neighbour != null) _neighbours.Add(neighbour);
-        neighbour = _grid.GetNode(_x + 1, _y);//
-        if (neighbour != null) _neighbours.Add(neighbour);
+        //Node neighbour = _grid.GetNode(_x, _y + 1);//Arriba
+        //if (neighbour != null) _neighbours.Add(neighbour);
+        //neighbour = _grid.GetNode(_x - 1, _y);//Izquierda
+        //if (neighbour != null) _neighbours.Add(neighbour);
+        //neighbour = _grid.GetNode(_x, _y - 1);//Abajo
+        //if (neighbour != null) _neighbours.Add(neighbour);
+        //neighbour = _grid.GetNode(_x + 1, _y);//
+        //if (neighbour != null) _neighbours.Add(neighbour);
 
         return _neighbours;
     }

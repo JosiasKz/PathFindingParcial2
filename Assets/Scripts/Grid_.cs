@@ -5,8 +5,8 @@ using UnityEngine;
 public class Grid_ : MonoBehaviour
 {
     //La grilla se configura con un alto y un ancho
-    [SerializeField] int _width;
-    [SerializeField] int _height;
+    int _width;
+    int _height;
     //Offset para hacer una separación entre los nodos
     [SerializeField] float _offset;
     //Prefab del nodo
