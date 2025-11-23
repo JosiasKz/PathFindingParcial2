@@ -5356,11 +5356,12 @@ MonoBehaviour:
   - {fileID: 1316334674}
   - {fileID: 745735847}
   - {fileID: 1349782729}
+  _pathfindingNodes: []
   _speed: 9.99
   wallLayer:
     serializedVersion: 2
     m_Bits: 64
-  _searchRadius: 10.06
+  _searchRadius: 10
 --- !u!1001 &1269646892
 PrefabInstance:
   m_ObjectHideFlags: 0

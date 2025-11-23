@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -12,17 +13,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] float _searchRadius;
     bool pathFinding = false;
     Node _currentNode;
-
-    //public void SetPos(Vector3 pos)
-    //{
-    //    //pos.z =transform.position.z;
-    //    transform.position = pos;
-    //}
-    //public void SetPath(List<Node> p)
-    //{
-    //    _path = p;
-    //    _path.Reverse();
-    //}
 
     // Update is called once per frame
     void Update()
@@ -54,12 +44,6 @@ public class Enemy : MonoBehaviour
                 _currentNode=null;
             }
         }
-        //if (_path.Count > 0)
-        //{
-
-
-
-        //}    
     }
 
     bool LineOfSight(Transform target)
@@ -82,7 +66,7 @@ public class Enemy : MonoBehaviour
     {
         Collider[] objects = Physics.OverlapSphere(transform.position, searchRadius);
         Node closest = null;
-
+        
         float minDist = Mathf.Infinity;
 
         foreach (Collider obj in objects)
@@ -98,8 +82,12 @@ public class Enemy : MonoBehaviour
 
                 closest = node;
             }
-
         }
         return closest;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position,_searchRadius);
     }
 }
