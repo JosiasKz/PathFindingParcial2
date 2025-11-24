@@ -23,7 +23,7 @@ public class Patrolstate : State
         Node nextNode = fsm.enemy._patrolNodes[currentIndex];
 
         if (fsm.enemy.LineOfSight(nextNode.transform))
-        {
+        { 
             goToNode(nextNode);
         }
         else
