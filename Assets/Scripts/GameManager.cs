@@ -58,5 +58,8 @@ public class GameManager : MonoBehaviour
         goalNode = node;
         node.GetComponent<Renderer>().material.color = Color.red;
     }
-
+    public List<Node> getPath(Node startNode, Node goalNode)
+    {
+        return _pf.GenerateAStar(startNode, goalNode);
+    }
 }

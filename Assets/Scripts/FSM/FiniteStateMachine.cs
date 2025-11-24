@@ -46,5 +46,5 @@ public class FiniteStateMachine
 
 public enum PlayerState
 {
-    Pathfinding, Patrol, Persuit
+    Pathfinding, Patrol, Persuit, Reset
 }

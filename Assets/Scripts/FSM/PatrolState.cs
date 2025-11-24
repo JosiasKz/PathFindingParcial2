@@ -19,7 +19,7 @@ public class Patrolstate : State
 
     public override void OnUpdate()
     {
-        Debug.Log("ejecutando update de patrol");
+        //Debug.Log("ejecutando update de patrol");
         Node nextNode = fsm.enemy._patrolNodes[currentIndex];
 
         if (fsm.enemy.LineOfSight(nextNode.transform))
@@ -29,7 +29,7 @@ public class Patrolstate : State
         else
         {
             fsm.enemy._toPatrol=nextNode;
-            fsm.ChangeState(PlayerState.Pathfinding);
+            fsm.ChangeState(PlayerState.Reset);
         }
     }
 

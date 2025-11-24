@@ -8,9 +8,11 @@ public class PathfindState : State
     List<Node> _path = new List<Node>();
     Node _startNode;
     bool _onStartNode=false;
+    int _currentIndex = 0;
     public override void OnEnter()
     {
-        _startNode = fsm.enemy.getClosestNode(fsm.enemy._speed);
+        _startNode = fsm.enemy._startNode;
+        _path = GameManager.instance.getPath(_startNode,fsm.enemy._toPatrol);
         //fsm.hunter.resting = true;
     }
 
@@ -22,18 +24,13 @@ public class PathfindState : State
     //el cazador para de moverse y recarga energias hasta que esté full
     public override void OnUpdate()
     {
-        if (!_onStartNode)
-        {
-            _onStartNode = goToNode(_startNode);
-        }
-        else
-        {
-            Debug.Log("start node alcanzado");
-        }
+        if()
+
     }
 
     bool goToNode(Node nodeToGo)
     {
+        Debug.Log("Se ejecuta go to node nodetogo "+nodeToGo);
         if (nodeToGo != null)
         {
             Vector3 dir = nodeToGo.transform.position - fsm.enemy.transform.position;

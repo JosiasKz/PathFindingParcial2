@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
     [SerializeField]LayerMask wallLayer;
     [SerializeField] float _searchRadius;
     FiniteStateMachine fsm;
+    public Node _startNode;
     bool pathFinding = false;
     Node _currentNode;
     public Node _toPatrol;
@@ -24,6 +25,7 @@ public class Enemy : MonoBehaviour
         fsm.AddState(PlayerState.Pathfinding, new PathfindState());
         fsm.AddState(PlayerState.Patrol, new Patrolstate());
         fsm.AddState(PlayerState.Persuit, new PersuitState());
+        fsm.AddState(PlayerState.Reset, new ResetState());
         //Arranca patrol
         fsm.ChangeState(PlayerState.Patrol);
     }
@@ -72,6 +74,14 @@ public class Enemy : MonoBehaviour
             }
         }
         return closest;
+    }
+
+    public bool checkOnNodePosition(Vector3 nodePosition)
+    {
+        Vector3 dir = nodePosition - transform.position;
+
+        if (dir.magnitude < 0.2f) return true;
+        else return false;
     }
 
     private void OnDrawGizmos()
