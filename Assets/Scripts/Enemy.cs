@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class Enemy : MonoBehaviour
 {
@@ -12,12 +13,14 @@ public class Enemy : MonoBehaviour
     [SerializeField] public float _speed;
     [SerializeField]LayerMask wallLayer;
     [SerializeField] public float _searchRadius;
+    [SerializeField] float viewRadius, viewAngle;
     FiniteStateMachine fsm;
     public Node _startNode;
     bool pathFinding = false;
     Node _currentNode;
     public Node _toPatrol;
     [SerializeField] public TextMeshProUGUI stateText;
+    Player _player;
     private void Start()
     {
         //Inicializamos state machine
@@ -28,12 +31,15 @@ public class Enemy : MonoBehaviour
         fsm.AddState(PlayerState.Reset, new ResetState());
         //Arranca patrol
         fsm.ChangeState(PlayerState.Patrol);
+        //_player = GameManager.instance._player;
+
     }
 
     // Update is called once per frame
     void Update()
     {
         fsm.Update();
+        FieldOfView();
     }
 
     public bool LineOfSight(Transform target)
@@ -51,7 +57,28 @@ public class Enemy : MonoBehaviour
 
         }
     }
+    void FieldOfView()
+    {
+        Vector3 dir = GameManager.instance._player.transform.position - transform.position;
+        if (dir.magnitude <= viewRadius)
+        {
+            if (Vector3.Angle(transform.forward, dir) <= viewAngle / 2)
+            {
+                if (!Physics.Raycast(transform.position, dir, out RaycastHit hitInfo, dir.magnitude, wallLayer))
+                {
+                    //_player.GetComponent<Renderer>().material.color = Color.red;
+                    Debug.DrawLine(transform.position, GameManager.instance._player.transform.position,Color.green);
+                }
+                else
+                {
+                    //_player.GetComponent<Renderer>().material.color = Color.blue;
+                    Debug.DrawLine(transform.position, hitInfo.point, Color.red);
+                }
 
+            }
+        }
+        //_player.GetComponent<Renderer>().material.color = Color.blue;
+    }
     public Node getClosestNode(float searchRadius)
     {
         Collider[] objects = Physics.OverlapSphere(transform.position, searchRadius);
@@ -83,6 +110,7 @@ public class Enemy : MonoBehaviour
         if (dir.magnitude < 0.2f) return true;
         else return false;
     }
+
 
     private void OnDrawGizmos()
     {

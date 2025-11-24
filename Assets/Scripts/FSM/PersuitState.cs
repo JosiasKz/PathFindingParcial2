@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class PersuitState : State
 {
+    Vector3 lastSeenPosition;
     public override void OnEnter()
     {
         //Debug.Log("Entro al Hunt");
+        lastSeenPosition = GameManager.instance._player.transform.position;
     }
 
     public override void OnExit()
@@ -16,19 +18,36 @@ public class PersuitState : State
 
     public override void OnUpdate()
     {
-        EnergyCheck();
+        Transform player = GameManager.instance._player.transform;
+
+        if (fsm.enemy.LineOfSight(player))
+        {
+            lastSeenPosition = player.position;
+            goToPlayer(player);
+        }
+        else
+        {
+            // perdió al player, buscar hasta el último punto visto
+            if (!fsm.enemy.checkOnNodePosition(lastSeenPosition))
+            {
+                goToPosition(lastSeenPosition);
+            }
+            else
+            {
+                // Llegó al punto pero no ve al player, reset
+                fsm.ChangeState(PlayerState.Reset);
+            }
+        }
+    }
+    void goToPlayer(Transform target)
+    {
+        Vector3 dir = target.position - fsm.enemy.transform.position;
+        fsm.enemy.transform.position += dir.normalized * Time.deltaTime * fsm.enemy._speed;
     }
 
-
-    //Este metodo lo agregué porque luego de comer un boid, el cazador quedaba en estado de hunt pero sin presa por un rato
-    public void backToPatrol()
+    void goToPosition(Vector3 pos)
     {
-        fsm.ChangeState(PlayerState.Patrol);
-    }
-
-    //Si me quedo sin energia, vamos a idle para recargar
-    void EnergyCheck()
-    {
-
+        Vector3 dir = pos - fsm.enemy.transform.position;
+        fsm.enemy.transform.position += dir.normalized * Time.deltaTime * fsm.enemy._speed;
     }
 }
