@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] public List<Node> _patrolNodes = new List<Node>();
     [SerializeField] public float _speed;
-    [SerializeField] LayerMask wallLayer;
+    [SerializeField]LayerMask wallLayer;
     [SerializeField] public float _searchRadius;
     [SerializeField] float viewRadius, viewAngle;
     FiniteStateMachine fsm;
@@ -34,14 +34,11 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(name + " TO PATROL "+_toPatrol);
         fsm.Update();
-        if (FieldOfView() && !_onPersuit)
+        if (FieldOfView())
         {
-            Debug.Log(name+ " envia alerta");
             GameManager.instance.AlertAllEnemies(GameManager.instance._player.transform.position);
             fsm.ChangeState(PlayerState.Persuit);
-            _onPersuit=true;
         }
     }
 
@@ -57,6 +54,7 @@ public class Enemy : MonoBehaviour
         {
             Debug.DrawLine(transform.position,hitInfo.point,Color.red);
             return false;
+
         }
     }
     bool FieldOfView()
@@ -68,11 +66,13 @@ public class Enemy : MonoBehaviour
             {
                 if (!Physics.Raycast(transform.position, dir, out RaycastHit hitInfo, dir.magnitude, wallLayer))
                 {
+                    //_player.GetComponent<Renderer>().material.color = Color.red;
                     Debug.DrawLine(transform.position, GameManager.instance._player.transform.position,Color.yellow);
                     return true;
                 }
                 else
                 {
+                    //_player.GetComponent<Renderer>().material.color = Color.blue;
                     Debug.DrawLine(transform.position, hitInfo.point, Color.red);
                     return false;
                 }
@@ -80,6 +80,8 @@ public class Enemy : MonoBehaviour
             }
         }
         return false;
+
+        //_player.GetComponent<Renderer>().material.color = Color.blue;
     }
     public Node getClosestNode(float searchRadius)
     {
@@ -139,11 +141,12 @@ public class Enemy : MonoBehaviour
     {
         // No cambiar si ya lo está persiguiendo
         if (fsm.currentPS == PlayerState.Persuit) return;
-        // Saltamos al reset para conectarnos al grafo
-        fsm.ChangeState(PlayerState.Reset);
+
         // Guardamos el punto como “ToPatrol temporal”
         _toPatrol = getClosestNodeFromPosition(alertPos);
-        Debug.Log(name + " recivió alerta para ir hacia el nodo " + _toPatrol);
+        Debug.Log(name+ " recivió alerta para ir hacia el nodo "+_toPatrol);
+        // Saltamos al reset para conectarnos al grafo
+        fsm.ChangeState(PlayerState.Reset);
     }
 
     private void OnDrawGizmos()
@@ -156,6 +159,7 @@ public class Enemy : MonoBehaviour
 
         Debug.DrawLine(transform.position, transform.position + LineA * viewRadius,Color.blue);
         Debug.DrawLine(transform.position, transform.position + LineB * viewRadius, Color.blue);
+
     }
 
     Vector3 GetVectorFromAngle(float angle)

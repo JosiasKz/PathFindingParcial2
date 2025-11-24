@@ -45,30 +45,12 @@ public class PersuitState : State
     void goToPlayer(Transform target)
     {
         Vector3 dir = target.position - fsm.enemy.transform.position;
-        if (dir != Vector3.zero)
-        {
-            Quaternion targetRot = Quaternion.LookRotation(dir);
-            fsm.enemy.transform.rotation = Quaternion.Lerp(
-                fsm.enemy.transform.rotation,
-                targetRot,
-                Time.deltaTime * 8f // velocidad de rotación
-            );
-        }
         fsm.enemy.transform.position += dir.normalized * Time.deltaTime * fsm.enemy._speed;
     }
 
     void goToPosition(Vector3 pos)
     {
         Vector3 dir = pos - fsm.enemy.transform.position;
-        if (dir != Vector3.zero)
-        {
-            Quaternion targetRot = Quaternion.LookRotation(dir);
-            fsm.enemy.transform.rotation = Quaternion.Lerp(
-                fsm.enemy.transform.rotation,
-                targetRot,
-                Time.deltaTime * 8f // velocidad de rotación
-            );
-        }
         fsm.enemy.transform.position += dir.normalized * Time.deltaTime * fsm.enemy._speed;
     }
 }

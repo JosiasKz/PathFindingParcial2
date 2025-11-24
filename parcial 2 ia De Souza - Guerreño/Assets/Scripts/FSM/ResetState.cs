@@ -7,7 +7,7 @@ public class ResetState : State
     Node _startNode;
     public override void OnEnter()
     {
-        Debug.Log(fsm.enemy.name+" ON ENTER reset TOPATROL "+fsm.enemy._toPatrol);
+        Debug.Log("ON ENTER reset");
         _startNode = fsm.enemy.getClosestNode(fsm.enemy._searchRadius);
         //Debug.Log("Entro al Hunt");
     }
