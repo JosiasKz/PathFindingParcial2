@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField]List<Node> _patrolNodes = new List<Node>();
+    [SerializeField] public List<Node> _patrolNodes = new List<Node>();
     [SerializeField] List<Node> _pathfindingNodes = new List<Node>();
-    [SerializeField] float _speed;
+    [SerializeField] public float _speed;
     [SerializeField]LayerMask wallLayer;
     [SerializeField] float _searchRadius;
     FiniteStateMachine fsm;
@@ -23,43 +23,17 @@ public class Enemy : MonoBehaviour
         fsm.AddState(PlayerState.Pathfinding, new PathfindState());
         fsm.AddState(PlayerState.Patrol, new Patrolstate());
         fsm.AddState(PlayerState.Persuit, new PersuitState());
-        //Arranca el idle, y este mismo delegará luego a patrol
+        //Arranca patrol
         fsm.ChangeState(PlayerState.Patrol);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-        if (_patrolNodes.Count > 0)
-        {
-            if (!LineOfSight(_patrolNodes[0].transform))
-            {
-                Debug.Log("buscando otro nodo cercano");
-                _currentNode = getClosestNode(_searchRadius);
-            }
-            else
-            {
-                Debug.Log("Nos quedamos con el primer nodo");
-
-                _currentNode = _patrolNodes[0];
-            }
-        }
-
-        if(_currentNode != null)
-        {
-            Vector3 dir = _currentNode.transform.position - transform.position;
-            //dir.z = 0;
-            transform.position += dir.normalized * Time.deltaTime * _speed;
-
-            if (dir.magnitude < 0.2f)
-            {
-                _currentNode=null;
-            }
-        }
+        fsm.Update();
     }
 
-    bool LineOfSight(Transform target)
+    public bool LineOfSight(Transform target)
     {
         Vector3 dir = target.transform.position - transform.position;
         if (!Physics.Raycast(transform.position,dir, out RaycastHit hitInfo,dir.magnitude, wallLayer ))
@@ -75,7 +49,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    Node getClosestNode(float searchRadius)
+    public Node getClosestNode(float searchRadius)
     {
         Collider[] objects = Physics.OverlapSphere(transform.position, searchRadius);
         Node closest = null;
