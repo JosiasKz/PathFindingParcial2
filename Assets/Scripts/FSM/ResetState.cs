@@ -8,7 +8,7 @@ public class ResetState : State
     public override void OnEnter()
     {
         Debug.Log("ON ENTER reset");
-        _startNode = fsm.enemy.getClosestNode(fsm.enemy._speed);
+        _startNode = fsm.enemy.getClosestNode(fsm.enemy._searchRadius);
         //Debug.Log("Entro al Hunt");
     }
 
@@ -22,7 +22,7 @@ public class ResetState : State
         if (_startNode == null || !fsm.enemy.LineOfSight(_startNode.transform))
         {
             Debug.Log("NO HAY NODO ENCONTRADO PARA ARRANCAR");
-            _startNode = fsm.enemy.getClosestNode(fsm.enemy._speed);
+            _startNode = fsm.enemy.getClosestNode(fsm.enemy._searchRadius);
         }
         else
         {

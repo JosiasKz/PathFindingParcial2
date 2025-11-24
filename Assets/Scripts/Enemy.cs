@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] List<Node> _pathfindingNodes = new List<Node>();
     [SerializeField] public float _speed;
     [SerializeField]LayerMask wallLayer;
-    [SerializeField] float _searchRadius;
+    [SerializeField] public float _searchRadius;
     FiniteStateMachine fsm;
     public Node _startNode;
     bool pathFinding = false;
