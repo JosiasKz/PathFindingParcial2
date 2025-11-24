@@ -14,6 +14,7 @@ public class FiniteStateMachine
     {
         this.enemy = enemy;
         enemy.OnPlayerDetected += HandlePlayerDetected;
+        enemy.OnAlertReceived += HandleAlertReceived;
     }
     public void Update()
     {
@@ -23,6 +24,12 @@ public class FiniteStateMachine
     void HandlePlayerDetected(Enemy en, Vector3 pos)
     {
         _currentState?.OnPlayerDetected(pos);
+
+    }
+    void HandleAlertReceived(Enemy en, Vector3 pos)
+    {
+        _currentState?.OnAlertReceived(pos);
+
     }
     public void AddState(PlayerState name, State state)
     {

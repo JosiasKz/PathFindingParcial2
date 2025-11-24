@@ -59,5 +59,18 @@ public class ResetState : State
             fsm.enemy.transform.position += dir.normalized * Time.deltaTime * fsm.enemy._speed;
         }
     }
+    public override void OnPlayerDetected(Vector3 pos)
+    {
+        Debug.Log(fsm.enemy.name + " ON PLAYER DETECTED RESET");
+        fsm.ChangeState(PlayerState.Persuit);
+        fsm.enemy._toPatrol = fsm.enemy.getClosestNodeFromPosition(pos);
 
+    }
+    public override void OnAlertReceived(Vector3 pos)
+    {
+        Debug.Log(fsm.enemy.name + " ON ALERT RECEIVED PERSUIT");
+        fsm.ChangeState(PlayerState.Reset);
+        fsm.enemy._toPatrol = fsm.enemy.getClosestNodeFromPosition(pos);
+
+    }
 }

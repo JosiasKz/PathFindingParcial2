@@ -21,6 +21,8 @@ public class Enemy : MonoBehaviour
     public bool _onPersuit =false;
     Player _player;
     public event Action<Enemy, Vector3> OnPlayerDetected;
+    public event Action<Enemy, Vector3> OnAlertReceived;
+
     private void Start()
     {
         //Inicializamos state machine
@@ -44,7 +46,7 @@ public class Enemy : MonoBehaviour
             Vector3 pos = GameManager.instance._player.transform.position;
             GameManager.instance.AlertAllEnemies(pos);
             OnPlayerDetected?.Invoke(this, pos);
-            fsm.ChangeState(PlayerState.Persuit);
+            //fsm.ChangeState(PlayerState.Persuit);
             _onPersuit=true;
         }
     }
@@ -109,7 +111,7 @@ public class Enemy : MonoBehaviour
         return closest;
     }
 
-    Node getClosestNodeFromPosition(Vector3 alertPos)
+    public Node getClosestNodeFromPosition(Vector3 alertPos)
     {
         Collider[] hits = Physics.OverlapSphere(alertPos, _searchRadius * 2);
         Node closest = null;
@@ -144,9 +146,10 @@ public class Enemy : MonoBehaviour
         // No cambiar si ya lo está persiguiendo
         if (fsm.currentPS == PlayerState.Persuit) return;
         // Saltamos al reset para conectarnos al grafo
-        fsm.ChangeState(PlayerState.Reset);
+        OnAlertReceived?.Invoke(this,alertPos);
+        //fsm.ChangeState(PlayerState.Reset);
         // Guardamos el punto como “ToPatrol temporal”
-        _toPatrol = getClosestNodeFromPosition(alertPos);
+        //_toPatrol = getClosestNodeFromPosition(alertPos);
         Debug.Log(name + " recivió alerta para ir hacia el nodo " + _toPatrol);
     }
 

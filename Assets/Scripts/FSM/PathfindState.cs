@@ -73,5 +73,17 @@ public class PathfindState : State
             }
         }
     }
+    public override void OnPlayerDetected(Vector3 pos)
+    {
+        Debug.Log(fsm.enemy.name + " ON PLAYER DETECTED PATHFIND");
+        fsm.enemy._toPatrol = fsm.enemy.getClosestNodeFromPosition(pos);
+        fsm.ChangeState(PlayerState.Persuit);
+    }
+    public override void OnAlertReceived(Vector3 pos)
+    {
+        Debug.Log(fsm.enemy.name + " ON ALERT RECEIVED PERSUIT");
+        fsm.ChangeState(PlayerState.Reset);
+        fsm.enemy._toPatrol = fsm.enemy.getClosestNodeFromPosition(pos);
 
+    }
 }
