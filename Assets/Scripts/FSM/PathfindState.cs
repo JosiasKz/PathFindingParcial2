@@ -14,7 +14,7 @@ public class PathfindState : State
     {
         _currentIndex = 0;
         _startNode = fsm.enemy._startNode;
-        Debug.Log("ON ENTER PATHFIND "+_startNode+" TO PATROL "+ fsm.enemy._toPatrol);
+        Debug.Log(fsm.enemy.name+" ON ENTER PATHFIND DESDE "+_startNode+" CON DESTINO A "+ fsm.enemy._toPatrol);
 
         ////Reiniciamos el patrullaje desde 0
         //if (!fsm.enemy._patrolNodes.Contains(fsm.enemy._toPatrol)|| fsm.enemy._toPatrol == null)
@@ -34,7 +34,7 @@ public class PathfindState : State
     {
         if (!fsm.enemy.checkOnNodePosition(fsm.enemy._toPatrol.transform.position))
         {
-            Debug.Log("PATH COUNT "+_path.Count+" CUURRENT INDEX "+_currentIndex);
+            //Debug.Log("PATH COUNT "+_path.Count+" CUURRENT INDEX "+_currentIndex);
             if (fsm.enemy.LineOfSight(_path[_currentIndex].transform))
             {
                 goToNode(_path[_currentIndex]);

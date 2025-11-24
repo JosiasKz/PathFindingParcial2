@@ -21,7 +21,7 @@ public class ResetState : State
     {
         if (_startNode == null || !fsm.enemy.LineOfSight(_startNode.transform))
         {
-            Debug.Log("NO HAY NODO ENCONTRADO PARA ARRANCAR");
+            Debug.Log(fsm.enemy+ " no encontró nodo cercano para hacer reset, agrandando radio de busqueda ");
             _startNode = fsm.enemy.getClosestNode(fsm.enemy._searchRadius*2);
         }
         else
@@ -32,7 +32,7 @@ public class ResetState : State
             }
             else
             {
-                Debug.Log("start node alcanzado");
+                Debug.Log(fsm.enemy + " start node alcanzado");
                 fsm.enemy._startNode = _startNode;
                 fsm.ChangeState(PlayerState.Pathfinding);
             }
@@ -42,7 +42,7 @@ public class ResetState : State
 
     void goToNode(Node nodeToGo)
     {
-        Debug.Log("Se ejecuta go to node nodetogo " + nodeToGo);
+        Debug.Log(fsm.enemy.name+" ejecuta go to node nodetogo " + nodeToGo+" con destino final de "+fsm.enemy._toPatrol);
         if (nodeToGo != null)
         {
             Vector3 dir = nodeToGo.transform.position - fsm.enemy.transform.position;

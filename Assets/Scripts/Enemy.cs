@@ -35,11 +35,10 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         fsm.Update();
-        if (FieldOfView()&& !_onPersuit)
+        if (FieldOfView())
         {
             GameManager.instance.AlertAllEnemies(GameManager.instance._player.transform.position);
             fsm.ChangeState(PlayerState.Persuit);
-            _onPersuit=true;
         }
     }
 
@@ -145,7 +144,7 @@ public class Enemy : MonoBehaviour
 
         // Guardamos el punto como “ToPatrol temporal”
         _toPatrol = getClosestNodeFromPosition(alertPos);
-
+        Debug.Log(name+ " recivió alerta para ir hacia el nodo "+_toPatrol);
         // Saltamos al reset para conectarnos al grafo
         fsm.ChangeState(PlayerState.Reset);
     }

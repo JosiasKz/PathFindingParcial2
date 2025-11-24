@@ -16,7 +16,7 @@ public class FiniteStateMachine
     }
     public void Update()
     {
-        Debug.Log(_currentState.ToString());
+        //Debug.Log(_currentState.ToString());
         _currentState?.OnUpdate();
     }
 

@@ -356,8 +356,6 @@ public class Pathfinding
             //yield return new WaitForSeconds(0.1f);
             if (current == goalNode)
             {
-                Debug.Log("listo");
-
                 //Creamos una lista de nodos llamado path
                 List<Node> path = new List<Node>();
 
@@ -379,7 +377,7 @@ public class Pathfinding
 
             foreach (Node next in current.GetNeightbours())
             {
-                Debug.Log("NODO "+next+" NEIGHBOURS COUNT "+ current.GetNeightbours().Count);
+                //Debug.Log("NODO "+next+" NEIGHBOURS COUNT "+ current.GetNeightbours().Count);
                 if (next.isBlocked)
                 {  
                     continue;
