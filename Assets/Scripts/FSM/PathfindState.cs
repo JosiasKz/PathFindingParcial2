@@ -15,8 +15,14 @@ public class PathfindState : State
         _currentIndex = 0;
         _startNode = fsm.enemy._startNode;
         Debug.Log("ON ENTER PATHFIND "+_startNode+" TO PATROL "+ fsm.enemy._toPatrol);
-        _path = GameManager.instance.getPath(_startNode,fsm.enemy._toPatrol);
-        //fsm.hunter.resting = true;
+
+        ////Reiniciamos el patrullaje desde 0
+        //if (!fsm.enemy._patrolNodes.Contains(fsm.enemy._toPatrol)|| fsm.enemy._toPatrol == null)
+        //{
+        //    fsm.enemy._toPatrol = fsm.enemy._patrolNodes[0];
+        //}
+
+        _path = GameManager.instance.getPath(_startNode,fsm.enemy._toPatrol);        
     }
 
     public override void OnExit()
@@ -24,7 +30,6 @@ public class PathfindState : State
         //Debug.Log("Salgo del idle");
     }
 
-    //el cazador para de moverse y recarga energias hasta que esté full
     public override void OnUpdate()
     {
         if (!fsm.enemy.checkOnNodePosition(fsm.enemy._toPatrol.transform.position))

@@ -22,7 +22,7 @@ public class ResetState : State
         if (_startNode == null || !fsm.enemy.LineOfSight(_startNode.transform))
         {
             Debug.Log("NO HAY NODO ENCONTRADO PARA ARRANCAR");
-            _startNode = fsm.enemy.getClosestNode(fsm.enemy._searchRadius);
+            _startNode = fsm.enemy.getClosestNode(fsm.enemy._searchRadius*2);
         }
         else
         {

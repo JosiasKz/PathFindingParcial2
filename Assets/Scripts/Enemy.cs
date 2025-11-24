@@ -36,6 +36,7 @@ public class Enemy : MonoBehaviour
         fsm.Update();
         if (FieldOfView())
         {
+            GameManager.instance.AlertAllEnemies(GameManager.instance._player.transform.position);
             fsm.ChangeState(PlayerState.Persuit);
         }
     }
@@ -105,6 +106,28 @@ public class Enemy : MonoBehaviour
         return closest;
     }
 
+    Node getClosestNodeFromPosition(Vector3 alertPos)
+    {
+        Collider[] hits = Physics.OverlapSphere(alertPos, _searchRadius * 2);
+        Node closest = null;
+        float minDist = Mathf.Infinity;
+
+        foreach (Collider col in hits)
+        {
+            Node n = col.GetComponent<Node>();
+            if (n == null) continue;
+
+            float d = Vector3.Distance(alertPos, n.transform.position);
+            if (d < minDist)
+            {
+                minDist = d;
+                closest = n;
+            }
+        }
+
+        return closest;
+    }
+
     public bool checkOnNodePosition(Vector3 nodePosition)
     {
         Vector3 dir = nodePosition - transform.position;
@@ -113,6 +136,17 @@ public class Enemy : MonoBehaviour
         else return false;
     }
 
+    public void ReceiveAlert(Vector3 alertPos)
+    {
+        // No cambiar si ya lo está persiguiendo
+        if (fsm.currentPS == PlayerState.Persuit) return;
+
+        // Guardamos el punto como “ToPatrol temporal”
+        _toPatrol = getClosestNodeFromPosition(alertPos);
+
+        // Saltamos al reset para conectarnos al grafo
+        fsm.ChangeState(PlayerState.Reset);
+    }
 
     private void OnDrawGizmos()
     {

@@ -6,14 +6,16 @@ using static UnityEngine.EventSystems.EventTrigger;
 public class Patrolstate : State
 {
     int currentIndex = 0;
-
+    Node exitNode = null;
     public override void OnEnter()
     {
         //Debug.Log("Entro al patrol");
+        exitNode = null;
     }
 
     public override void OnExit()
     {
+        fsm.enemy._toPatrol = exitNode;
         //Debug.Log("Salgo del Patrol");
     }
 
@@ -21,14 +23,14 @@ public class Patrolstate : State
     {
         //Debug.Log("ejecutando update de patrol");
         Node nextNode = fsm.enemy._patrolNodes[currentIndex];
-
+        exitNode = nextNode;
         if (fsm.enemy.LineOfSight(nextNode.transform))
         { 
             goToNode(nextNode);
         }
         else
         {
-            fsm.enemy._toPatrol=nextNode;
+            
             fsm.ChangeState(PlayerState.Reset);
         }
     }
