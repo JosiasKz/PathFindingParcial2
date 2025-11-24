@@ -13,13 +13,17 @@ public class FiniteStateMachine
     public FiniteStateMachine(Enemy enemy)
     {
         this.enemy = enemy;
+        enemy.OnPlayerDetected += HandlePlayerDetected;
     }
     public void Update()
     {
         //Debug.Log(_currentState.ToString());
         _currentState?.OnUpdate();
     }
-
+    void HandlePlayerDetected(Enemy en, Vector3 pos)
+    {
+        _currentState?.OnPlayerDetected(pos);
+    }
     public void AddState(PlayerState name, State state)
     {
         if (!_allStates.ContainsKey(name))

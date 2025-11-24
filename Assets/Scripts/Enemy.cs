@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 using static UnityEngine.EventSystems.EventTrigger;
 
 public class Enemy : MonoBehaviour
@@ -19,6 +20,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] public TextMeshProUGUI stateText;
     public bool _onPersuit =false;
     Player _player;
+    public event Action<Enemy, Vector3> OnPlayerDetected;
     private void Start()
     {
         //Inicializamos state machine
@@ -39,7 +41,9 @@ public class Enemy : MonoBehaviour
         if (FieldOfView() && !_onPersuit)
         {
             Debug.Log(name+ " envia alerta");
-            GameManager.instance.AlertAllEnemies(GameManager.instance._player.transform.position);
+            Vector3 pos = GameManager.instance._player.transform.position;
+            GameManager.instance.AlertAllEnemies(pos);
+            OnPlayerDetected?.Invoke(this, pos);
             fsm.ChangeState(PlayerState.Persuit);
             _onPersuit=true;
         }

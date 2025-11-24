@@ -11,5 +11,7 @@ public abstract class State
 
     public abstract void OnExit();
 
+    public virtual void OnPlayerDetected(Vector3 playerPos) { }
+
     public FiniteStateMachine fsm;
 }
