@@ -17,6 +17,7 @@ public class Enemy : MonoBehaviour
     public Node _startNode;
     public Node _toPatrol;
     [SerializeField] public TextMeshProUGUI stateText;
+    public bool _onPersuit =false;
     Player _player;
     private void Start()
     {
@@ -34,10 +35,11 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         fsm.Update();
-        if (FieldOfView())
+        if (FieldOfView()&& !_onPersuit)
         {
             GameManager.instance.AlertAllEnemies(GameManager.instance._player.transform.position);
             fsm.ChangeState(PlayerState.Persuit);
+            _onPersuit=true;
         }
     }
 

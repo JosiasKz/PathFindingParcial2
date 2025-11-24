@@ -13,6 +13,7 @@ public class PersuitState : State
 
     public override void OnExit()
     {
+        fsm.enemy._onPersuit=false;
         //Debug.Log("Salgo del Hunt");
     }
 
@@ -35,7 +36,9 @@ public class PersuitState : State
             else
             {
                 // Llegó al punto pero no ve al player, reset
+                
                 fsm.ChangeState(PlayerState.Reset);
+                
             }
         }
     }
