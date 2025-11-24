@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,8 +12,20 @@ public class Enemy : MonoBehaviour
     [SerializeField] float _speed;
     [SerializeField]LayerMask wallLayer;
     [SerializeField] float _searchRadius;
+    FiniteStateMachine fsm;
     bool pathFinding = false;
     Node _currentNode;
+    [SerializeField] public TextMeshProUGUI stateText;
+    private void Start()
+    {
+        //Inicializamos state machine
+        fsm = new FiniteStateMachine(this);
+        fsm.AddState(PlayerState.Pathfinding, new PathfindState());
+        fsm.AddState(PlayerState.Patrol, new Patrolstate());
+        fsm.AddState(PlayerState.Persuit, new PersuitState());
+        //Arranca el idle, y este mismo delegará luego a patrol
+        fsm.ChangeState(PlayerState.Patrol);
+    }
 
     // Update is called once per frame
     void Update()

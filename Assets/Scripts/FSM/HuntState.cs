@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HuntState : State
+public class PersuitState : State
 {
     public override void OnEnter()
     {
@@ -29,9 +29,6 @@ public class HuntState : State
     //Si me quedo sin energia, vamos a idle para recargar
     void EnergyCheck()
     {
-        if (fsm.hunter.energy == 0 || fsm.hunter.resting)
-        {
-            fsm.ChangeState(PlayerState.Idle);
-        }
+
     }
 }

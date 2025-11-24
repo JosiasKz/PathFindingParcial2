@@ -6,13 +6,13 @@ public class FiniteStateMachine
 {
     Dictionary<PlayerState, State> _allStates = new Dictionary<PlayerState, State>();
     public State _currentState;
-    public Hunter hunter;
+    public Enemy enemy;
     public PlayerState currentPS;
 
     //Seteamos este constructor para que el fsm tenga una referencia al Hunter, de esta manera poder chequear sus variables y decidir la transición de los estados
-    public FiniteStateMachine(Hunter hunter)
+    public FiniteStateMachine(Enemy enemy)
     {
-        this.hunter = hunter;
+        this.enemy = enemy;
     }
     public void Update()
     {
@@ -40,11 +40,11 @@ public class FiniteStateMachine
         if(_allStates.ContainsKey(name))_currentState = _allStates[name];
         _currentState.OnEnter();
         currentPS = name;
-        hunter.stateText.text=currentPS.ToString();
+        enemy.stateText.text=currentPS.ToString();
     }
 }
 
 public enum PlayerState
 {
-    Idle, Walk, Patrol, Hunt
+    Pathfinding, Patrol, Persuit
 }

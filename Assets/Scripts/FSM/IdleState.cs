@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
 
-public class IdleState : State
+public class PathfindState : State
 {
     public override void OnEnter()
     {
-        fsm.hunter.resting = true;
+        //fsm.hunter.resting = true;
     }
 
     public override void OnExit()

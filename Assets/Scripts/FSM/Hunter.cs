@@ -27,14 +27,14 @@ public class Hunter : MonoBehaviour
     {
 
         //Inicializamos state machine
-        fsm = new FiniteStateMachine(this);
-        fsm.AddState(PlayerState.Idle,new IdleState());
-        fsm.AddState(PlayerState.Patrol,new Patrolstate());
-        fsm.AddState(PlayerState.Hunt,new HuntState());
-        //Arranca el idle, y este mismo delegará luego a patrol
-        fsm.ChangeState(PlayerState.Idle);
-        lastPosition=transform.position;
-        energy = maxEnergy;
+        //fsm = new FiniteStateMachine(this);
+        //fsm.AddState(PlayerState.Pathfinding,new PathfindState());
+        //fsm.AddState(PlayerState.Patrol,new Patrolstate());
+        //fsm.AddState(PlayerState.Persuit,new PersuitState());
+        ////Arranca el idle, y este mismo delegará luego a patrol
+        //fsm.ChangeState(PlayerState.Patrol);
+        //lastPosition=transform.position;
+        //energy = maxEnergy;
     }
 
     // Update is called once per frame
