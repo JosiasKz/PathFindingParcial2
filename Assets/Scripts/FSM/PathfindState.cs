@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
 
@@ -11,7 +12,9 @@ public class PathfindState : State
     int _currentIndex = 0;
     public override void OnEnter()
     {
+        _currentIndex = 0;
         _startNode = fsm.enemy._startNode;
+        Debug.Log("ON ENTER PATHFIND "+_startNode+" TO PATROL "+ fsm.enemy._toPatrol);
         _path = GameManager.instance.getPath(_startNode,fsm.enemy._toPatrol);
         //fsm.hunter.resting = true;
     }
@@ -24,23 +27,37 @@ public class PathfindState : State
     //el cazador para de moverse y recarga energias hasta que esté full
     public override void OnUpdate()
     {
-        if()
-
+        if (!fsm.enemy.checkOnNodePosition(fsm.enemy._toPatrol.transform.position))
+        {
+            Debug.Log("PATH COUNT "+_path.Count+" CUURRENT INDEX "+_currentIndex);
+            if (fsm.enemy.LineOfSight(_path[_currentIndex].transform))
+            {
+                goToNode(_path[_currentIndex]);
+            }
+            else
+            {
+                fsm.ChangeState(PlayerState.Reset);
+            }
+        }
+        else
+        {
+            fsm.ChangeState(PlayerState.Patrol);
+        }
     }
 
-    bool goToNode(Node nodeToGo)
+    void goToNode(Node nodeToGo)
     {
-        Debug.Log("Se ejecuta go to node nodetogo "+nodeToGo);
         if (nodeToGo != null)
         {
             Vector3 dir = nodeToGo.transform.position - fsm.enemy.transform.position;
             //dir.z = 0;
             fsm.enemy.transform.position += dir.normalized * Time.deltaTime * fsm.enemy._speed;
 
-            if (dir.magnitude < 0.2f) return true;
-            else return false;
-
-        }else return false;
+            if (dir.magnitude < 0.2f)
+            {
+                _currentIndex++;
+            }
+        }
     }
 
 }

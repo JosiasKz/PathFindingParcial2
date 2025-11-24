@@ -336,6 +336,7 @@ public class Pathfinding
 
     public List<Node> GenerateAStar(Node startingNode, Node goalNode)
     {
+        
         if (startingNode == null || goalNode == null) return null;
 
         PriorityQueue frontier = new PriorityQueue();
@@ -378,7 +379,11 @@ public class Pathfinding
 
             foreach (Node next in current.GetNeightbours())
             {
-                if (next.isBlocked) continue;
+                Debug.Log("NODO "+next+" NEIGHBOURS COUNT "+ current.GetNeightbours().Count);
+                if (next.isBlocked)
+                {  
+                    continue;
+                }
 
                 float newCost = costSoFar[current] + next.cost;
                 float dist = Heuristic(next.transform.position, goalNode.transform.position);
