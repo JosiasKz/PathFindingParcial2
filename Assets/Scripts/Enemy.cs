@@ -15,6 +15,7 @@ public class Enemy : MonoBehaviour
     FiniteStateMachine fsm;
     bool pathFinding = false;
     Node _currentNode;
+    public Node _toPatrol;
     [SerializeField] public TextMeshProUGUI stateText;
     private void Start()
     {

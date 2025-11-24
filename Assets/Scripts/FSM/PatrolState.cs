@@ -26,6 +26,11 @@ public class Patrolstate : State
         {
             goToNode(nextNode);
         }
+        else
+        {
+            fsm.enemy._toPatrol=nextNode;
+            fsm.ChangeState(PlayerState.Pathfinding);
+        }
     }
 
     void goToNode(Node nodeToGo)
