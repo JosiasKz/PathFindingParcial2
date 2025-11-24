@@ -9,15 +9,12 @@ using static UnityEngine.EventSystems.EventTrigger;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] public List<Node> _patrolNodes = new List<Node>();
-    [SerializeField] List<Node> _pathfindingNodes = new List<Node>();
     [SerializeField] public float _speed;
     [SerializeField]LayerMask wallLayer;
     [SerializeField] public float _searchRadius;
     [SerializeField] float viewRadius, viewAngle;
     FiniteStateMachine fsm;
     public Node _startNode;
-    bool pathFinding = false;
-    Node _currentNode;
     public Node _toPatrol;
     [SerializeField] public TextMeshProUGUI stateText;
     Player _player;
@@ -31,15 +28,16 @@ public class Enemy : MonoBehaviour
         fsm.AddState(PlayerState.Reset, new ResetState());
         //Arranca patrol
         fsm.ChangeState(PlayerState.Patrol);
-        //_player = GameManager.instance._player;
-
     }
 
     // Update is called once per frame
     void Update()
     {
         fsm.Update();
-        FieldOfView();
+        if (FieldOfView())
+        {
+            fsm.ChangeState(PlayerState.Persuit);
+        }
     }
 
     public bool LineOfSight(Transform target)
@@ -57,7 +55,7 @@ public class Enemy : MonoBehaviour
 
         }
     }
-    void FieldOfView()
+    bool FieldOfView()
     {
         Vector3 dir = GameManager.instance._player.transform.position - transform.position;
         if (dir.magnitude <= viewRadius)
@@ -67,16 +65,20 @@ public class Enemy : MonoBehaviour
                 if (!Physics.Raycast(transform.position, dir, out RaycastHit hitInfo, dir.magnitude, wallLayer))
                 {
                     //_player.GetComponent<Renderer>().material.color = Color.red;
-                    Debug.DrawLine(transform.position, GameManager.instance._player.transform.position,Color.green);
+                    Debug.DrawLine(transform.position, GameManager.instance._player.transform.position,Color.yellow);
+                    return true;
                 }
                 else
                 {
                     //_player.GetComponent<Renderer>().material.color = Color.blue;
                     Debug.DrawLine(transform.position, hitInfo.point, Color.red);
+                    return false;
                 }
 
             }
         }
+        return false;
+
         //_player.GetComponent<Renderer>().material.color = Color.blue;
     }
     public Node getClosestNode(float searchRadius)
@@ -114,6 +116,19 @@ public class Enemy : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireSphere(transform.position,_searchRadius);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, viewRadius);
+
+        Vector3 LineA = GetVectorFromAngle(viewAngle / 2 + transform.eulerAngles.y);
+        Vector3 LineB = GetVectorFromAngle(-viewAngle / 2 + transform.eulerAngles.y);
+
+        Debug.DrawLine(transform.position, transform.position + LineA * viewRadius,Color.blue);
+        Debug.DrawLine(transform.position, transform.position + LineB * viewRadius, Color.blue);
+
+    }
+
+    Vector3 GetVectorFromAngle(float angle)
+    {
+        return new Vector3(Mathf.Sin(angle * Mathf.Deg2Rad), 0, Mathf.Cos(angle * Mathf.Deg2Rad));
     }
 }

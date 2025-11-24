@@ -39,6 +39,15 @@ public class Patrolstate : State
         {
             Vector3 dir = nodeToGo.transform.position - fsm.enemy.transform.position;
             //dir.z = 0;
+            if (dir != Vector3.zero)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(dir);
+                fsm.enemy.transform.rotation = Quaternion.Lerp(
+                    fsm.enemy.transform.rotation,
+                    targetRot,
+                    Time.deltaTime * 8f // velocidad de rotación
+                );
+            }
             fsm.enemy.transform.position += dir.normalized * Time.deltaTime * fsm.enemy._speed;
 
             if (dir.magnitude < 0.2f)
