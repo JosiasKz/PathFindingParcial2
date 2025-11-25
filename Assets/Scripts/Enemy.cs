@@ -9,20 +9,20 @@ using static UnityEngine.EventSystems.EventTrigger;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] public List<Node> _patrolNodes = new List<Node>();
-    [SerializeField] public float _speed;
+    public List<Node> _patrolNodes = new List<Node>();
+    public float _speed;
     [SerializeField] LayerMask wallLayer;
-    [SerializeField] public float _searchRadius;
+    public float _searchRadius;
     [SerializeField] float viewRadius, viewAngle;
     FiniteStateMachine fsm;
     public Node _startNode;
     public Node _toPatrol;
-    [SerializeField] public TextMeshProUGUI stateText;
+    public TextMeshProUGUI stateText;
     public bool _onPersuit =false;
     Player _player;
     public event Action<Enemy, Vector3> OnPlayerDetected;
     public event Action<Enemy, Vector3> OnAlertReceived;
-
+    public float minDistanceToPlayer;
     private void Start()
     {
         //Inicializamos state machine
@@ -121,7 +121,7 @@ public class Enemy : MonoBehaviour
         {
             Node n = col.GetComponent<Node>();
             if (n == null) continue;
-
+            //if (!LineOfSight(col.transform)) continue;
             float d = Vector3.Distance(alertPos, n.transform.position);
             if (d < minDist)
             {
@@ -145,11 +145,7 @@ public class Enemy : MonoBehaviour
     {
         // No cambiar si ya lo está persiguiendo
         if (fsm.currentPS == PlayerState.Persuit) return;
-        // Saltamos al reset para conectarnos al grafo
         OnAlertReceived?.Invoke(this,alertPos);
-        //fsm.ChangeState(PlayerState.Reset);
-        // Guardamos el punto como “ToPatrol temporal”
-        //_toPatrol = getClosestNodeFromPosition(alertPos);
         Debug.Log(name + " recivió alerta para ir hacia el nodo " + _toPatrol);
     }
 

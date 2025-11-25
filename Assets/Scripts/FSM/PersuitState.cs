@@ -7,14 +7,12 @@ public class PersuitState : State
     Vector3 lastSeenPosition;
     public override void OnEnter()
     {
-        //Debug.Log("Entro al Hunt");
         lastSeenPosition = GameManager.instance._player.transform.position;
     }
 
     public override void OnExit()
     {
         fsm.enemy._onPersuit=false;
-        //Debug.Log("Salgo del Hunt");
     }
 
     public override void OnUpdate()
@@ -35,26 +33,36 @@ public class PersuitState : State
             }
             else
             {
-                // Llegó al punto pero no ve al player, reset
-                
-                fsm.ChangeState(PlayerState.Reset);
-                
+                // Llegó al punto pero no ve al player, reset                
+                fsm.ChangeState(PlayerState.Reset);                
             }
         }
     }
     void goToPlayer(Transform target)
     {
         Vector3 dir = target.position - fsm.enemy.transform.position;
+        float dist = dir.magnitude;
+
+        if (dist <= fsm.enemy.minDistanceToPlayer)
+            return;
+
         if (dir != Vector3.zero)
         {
             Quaternion targetRot = Quaternion.LookRotation(dir);
             fsm.enemy.transform.rotation = Quaternion.Lerp(
                 fsm.enemy.transform.rotation,
                 targetRot,
-                Time.deltaTime * 8f // velocidad de rotación
+                Time.deltaTime * 8f
             );
         }
-        fsm.enemy.transform.position += dir.normalized * Time.deltaTime * fsm.enemy._speed;
+        dir /= dist; 
+
+        float step = fsm.enemy._speed * Time.deltaTime;
+
+        float maxAllowedStep = dist - fsm.enemy.minDistanceToPlayer;
+        if (step > maxAllowedStep)
+            step = maxAllowedStep;
+        fsm.enemy.transform.position += dir * step;
     }
 
     void goToPosition(Vector3 pos)
@@ -71,6 +79,7 @@ public class PersuitState : State
         }
         fsm.enemy.transform.position += dir.normalized * Time.deltaTime * fsm.enemy._speed;
     }
+
     public override void OnPlayerDetected(Vector3 pos)
     {
         Debug.Log(fsm.enemy.name + " ON PLAYER DETECTED PERSUIT");

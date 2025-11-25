@@ -9,7 +9,6 @@ public class ResetState : State
     {
         Debug.Log(fsm.enemy.name+" ON ENTER reset TOPATROL "+fsm.enemy._toPatrol);
         _startNode = fsm.enemy.getClosestNode(fsm.enemy._searchRadius);
-        //Debug.Log("Entro al Hunt");
     }
 
     public override void OnExit()
@@ -21,8 +20,8 @@ public class ResetState : State
     {
         if (_startNode == null || !fsm.enemy.LineOfSight(_startNode.transform))
         {
-            Debug.Log(fsm.enemy+ " no encontró nodo cercano para hacer reset, agrandando radio de busqueda ");
-            _startNode = fsm.enemy.getClosestNode(fsm.enemy._searchRadius*2);
+            Debug.Log(fsm.enemy+ " no encontró nodo cercano para hacer reset, como fallback ampliamos el radio de busqueda");
+            _startNode = fsm.enemy.getClosestNode(fsm.enemy._searchRadius*4);
         }
         else
         {
