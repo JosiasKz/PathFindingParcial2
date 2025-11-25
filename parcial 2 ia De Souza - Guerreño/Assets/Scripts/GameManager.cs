@@ -23,11 +23,12 @@ public class GameManager : MonoBehaviour
         //Arranca y crea un objeto pathfinding
         _pf = new Pathfinding();
     }
-    //Cuando llamamos a esta funcion, estamos declarando a un nodo como el nodo inicial
+    //Esta funcion sirve para pedirle a A* que nos arme un camino optimo entre un nodo inicial y un nodo final
     public List<Node> getPath(Node startNode, Node goalNode)
     {
         return _pf.GenerateAStar(startNode, goalNode);
     }
+    //Con este metodo iteramos por nuestra lista de enemigos y les ejecutamos su metodo ReceiveAlert, que incluye una posición donde el enemy tiene que ir
     public void AlertAllEnemies(Vector3 alertPosition)
     {
         foreach (Enemy enemy in enemies)

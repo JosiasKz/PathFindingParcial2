@@ -9,17 +9,29 @@ public class FiniteStateMachine
     public Enemy enemy;
     public PlayerState currentPS;
 
-    //Seteamos este constructor para que el fsm tenga una referencia al Hunter, de esta manera poder chequear sus variables y decidir la transición de los estados
+    //Seteamos este constructor para que el fsm tenga una referencia al enemy, de esta manera poder chequear sus variables y decidir la transición de los estados
+    //De paso, el fsm se suscribe a los eventos
     public FiniteStateMachine(Enemy enemy)
     {
         this.enemy = enemy;
+        enemy.OnPlayerDetected += HandlePlayerDetected;
+        enemy.OnAlertReceived += HandleAlertReceived;
     }
     public void Update()
     {
         //Debug.Log(_currentState.ToString());
         _currentState?.OnUpdate();
     }
+    void HandlePlayerDetected(Enemy en, Vector3 pos)
+    {
+        _currentState?.OnPlayerDetected(pos);
 
+    }
+    void HandleAlertReceived(Enemy en, Vector3 pos)
+    {
+        _currentState?.OnAlertReceived(pos);
+
+    }
     public void AddState(PlayerState name, State state)
     {
         if (!_allStates.ContainsKey(name))

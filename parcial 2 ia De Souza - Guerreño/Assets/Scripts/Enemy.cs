@@ -4,21 +4,30 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 using static UnityEngine.EventSystems.EventTrigger;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] public List<Node> _patrolNodes = new List<Node>();
-    [SerializeField] public float _speed;
-    [SerializeField]LayerMask wallLayer;
-    [SerializeField] public float _searchRadius;
+    //Lista de nodos que tiene que patrullar
+    public List<Node> _patrolNodes = new List<Node>();
+    public float _speed;
+    [SerializeField] LayerMask wallLayer;
+    public float _searchRadius;
     [SerializeField] float viewRadius, viewAngle;
     FiniteStateMachine fsm;
+    //_startNode es el node que va a usar el enemy para empezar el path que va a generar A*
     public Node _startNode;
+    //_toPatrol es un nodo temporal, sirve para tener de referencia en que nodo se quedó antes de ser interrumpido
     public Node _toPatrol;
-    [SerializeField] public TextMeshProUGUI stateText;
+    public TextMeshProUGUI stateText;
     public bool _onPersuit =false;
-    Player _player;
+    //OnDetected es el evento que lanza enemy cuando detecta al player
+    public event Action<Enemy, Vector3> OnPlayerDetected;
+    //OnAlertReceived es el evento que lanza enemy cuando recivió el alerta del game manager
+    public event Action<Enemy, Vector3> OnAlertReceived;
+    //Distancia minima que va a tomar el enemigo del player para no encimarlo
+    public float minDistanceToPlayer;
     private void Start()
     {
         //Inicializamos state machine
@@ -34,11 +43,21 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(name + " TO PATROL "+_toPatrol);
+
         fsm.Update();
-        if (FieldOfView())
+        //El enemigo chequea FOV todo el tiempo para ver si se cruza con el player
+        if (FieldOfView() && !_onPersuit)
         {
-            GameManager.instance.AlertAllEnemies(GameManager.instance._player.transform.position);
-            fsm.ChangeState(PlayerState.Persuit);
+            Debug.Log(name+ " envia alerta");
+            //En caso de encontrar al player, guarda la posición del mismo en la variable pos
+            //Y ejecuta AlertAllEnemies en el gameManager
+            Vector3 pos = GameManager.instance._player.transform.position;
+            GameManager.instance.AlertAllEnemies(pos);
+            //Tambien ejecutamos el evento OnPlayerDetected, al cual el fsm está suscrito
+            //permitiendole saber cuando hacer la transición al estado Persuit
+            OnPlayerDetected?.Invoke(this, pos);
+            _onPersuit=true;
         }
     }
 
@@ -54,7 +73,6 @@ public class Enemy : MonoBehaviour
         {
             Debug.DrawLine(transform.position,hitInfo.point,Color.red);
             return false;
-
         }
     }
     bool FieldOfView()
@@ -66,13 +84,11 @@ public class Enemy : MonoBehaviour
             {
                 if (!Physics.Raycast(transform.position, dir, out RaycastHit hitInfo, dir.magnitude, wallLayer))
                 {
-                    //_player.GetComponent<Renderer>().material.color = Color.red;
                     Debug.DrawLine(transform.position, GameManager.instance._player.transform.position,Color.yellow);
                     return true;
                 }
                 else
                 {
-                    //_player.GetComponent<Renderer>().material.color = Color.blue;
                     Debug.DrawLine(transform.position, hitInfo.point, Color.red);
                     return false;
                 }
@@ -80,9 +96,9 @@ public class Enemy : MonoBehaviour
             }
         }
         return false;
-
-        //_player.GetComponent<Renderer>().material.color = Color.blue;
     }
+
+    //Esta función se encarga de devolver cual es el nodo más cercano al enemigo
     public Node getClosestNode(float searchRadius)
     {
         Collider[] objects = Physics.OverlapSphere(transform.position, searchRadius);
@@ -106,8 +122,8 @@ public class Enemy : MonoBehaviour
         }
         return closest;
     }
-
-    Node getClosestNodeFromPosition(Vector3 alertPos)
+    //Esta función se encarga de buscar el nodo más cercano pero a partir de una posición
+    public Node getClosestNodeFromPosition(Vector3 alertPos)
     {
         Collider[] hits = Physics.OverlapSphere(alertPos, _searchRadius * 2);
         Node closest = null;
@@ -117,7 +133,7 @@ public class Enemy : MonoBehaviour
         {
             Node n = col.GetComponent<Node>();
             if (n == null) continue;
-
+            //if (!LineOfSight(col.transform)) continue;
             float d = Vector3.Distance(alertPos, n.transform.position);
             if (d < minDist)
             {
@@ -129,6 +145,7 @@ public class Enemy : MonoBehaviour
         return closest;
     }
 
+    //ESta función sirve para ver si algo llegó a un nodo en especifico
     public bool checkOnNodePosition(Vector3 nodePosition)
     {
         Vector3 dir = nodePosition - transform.position;
@@ -137,18 +154,16 @@ public class Enemy : MonoBehaviour
         else return false;
     }
 
+    //ESta función sirve para ver si algo llegó a un nodo en especifico
     public void ReceiveAlert(Vector3 alertPos)
     {
         // No cambiar si ya lo está persiguiendo
         if (fsm.currentPS == PlayerState.Persuit) return;
-
-        // Guardamos el punto como “ToPatrol temporal”
-        _toPatrol = getClosestNodeFromPosition(alertPos);
-        Debug.Log(name+ " recivió alerta para ir hacia el nodo "+_toPatrol);
-        // Saltamos al reset para conectarnos al grafo
-        fsm.ChangeState(PlayerState.Reset);
+        OnAlertReceived?.Invoke(this,alertPos);
+        Debug.Log(name + " recivió alerta para ir hacia el nodo " + _toPatrol);
     }
 
+    //Con esto podemos visualizar los rangos de de busqueda
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
@@ -159,7 +174,6 @@ public class Enemy : MonoBehaviour
 
         Debug.DrawLine(transform.position, transform.position + LineA * viewRadius,Color.blue);
         Debug.DrawLine(transform.position, transform.position + LineB * viewRadius, Color.blue);
-
     }
 
     Vector3 GetVectorFromAngle(float angle)

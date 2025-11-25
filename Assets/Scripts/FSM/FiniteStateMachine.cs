@@ -10,6 +10,7 @@ public class FiniteStateMachine
     public PlayerState currentPS;
 
     //Seteamos este constructor para que el fsm tenga una referencia al enemy, de esta manera poder chequear sus variables y decidir la transición de los estados
+    //De paso, el fsm se suscribe a los eventos
     public FiniteStateMachine(Enemy enemy)
     {
         this.enemy = enemy;

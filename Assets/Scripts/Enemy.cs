@@ -9,19 +9,24 @@ using static UnityEngine.EventSystems.EventTrigger;
 
 public class Enemy : MonoBehaviour
 {
+    //Lista de nodos que tiene que patrullar
     public List<Node> _patrolNodes = new List<Node>();
     public float _speed;
     [SerializeField] LayerMask wallLayer;
     public float _searchRadius;
     [SerializeField] float viewRadius, viewAngle;
     FiniteStateMachine fsm;
+    //_startNode es el node que va a usar el enemy para empezar el path que va a generar A*
     public Node _startNode;
+    //_toPatrol es un nodo temporal, sirve para tener de referencia en que nodo se quedó antes de ser interrumpido
     public Node _toPatrol;
     public TextMeshProUGUI stateText;
     public bool _onPersuit =false;
-    Player _player;
+    //OnDetected es el evento que lanza enemy cuando detecta al player
     public event Action<Enemy, Vector3> OnPlayerDetected;
+    //OnAlertReceived es el evento que lanza enemy cuando recivió el alerta del game manager
     public event Action<Enemy, Vector3> OnAlertReceived;
+    //Distancia minima que va a tomar el enemigo del player para no encimarlo
     public float minDistanceToPlayer;
     private void Start()
     {
@@ -39,14 +44,19 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         Debug.Log(name + " TO PATROL "+_toPatrol);
+
         fsm.Update();
+        //El enemigo chequea FOV todo el tiempo para ver si se cruza con el player
         if (FieldOfView() && !_onPersuit)
         {
             Debug.Log(name+ " envia alerta");
+            //En caso de encontrar al player, guarda la posición del mismo en la variable pos
+            //Y ejecuta AlertAllEnemies en el gameManager
             Vector3 pos = GameManager.instance._player.transform.position;
             GameManager.instance.AlertAllEnemies(pos);
+            //Tambien ejecutamos el evento OnPlayerDetected, al cual el fsm está suscrito
+            //permitiendole saber cuando hacer la transición al estado Persuit
             OnPlayerDetected?.Invoke(this, pos);
-            //fsm.ChangeState(PlayerState.Persuit);
             _onPersuit=true;
         }
     }
@@ -87,6 +97,8 @@ public class Enemy : MonoBehaviour
         }
         return false;
     }
+
+    //Esta función se encarga de devolver cual es el nodo más cercano al enemigo
     public Node getClosestNode(float searchRadius)
     {
         Collider[] objects = Physics.OverlapSphere(transform.position, searchRadius);
@@ -110,7 +122,7 @@ public class Enemy : MonoBehaviour
         }
         return closest;
     }
-
+    //Esta función se encarga de buscar el nodo más cercano pero a partir de una posición
     public Node getClosestNodeFromPosition(Vector3 alertPos)
     {
         Collider[] hits = Physics.OverlapSphere(alertPos, _searchRadius * 2);
@@ -133,6 +145,7 @@ public class Enemy : MonoBehaviour
         return closest;
     }
 
+    //ESta función sirve para ver si algo llegó a un nodo en especifico
     public bool checkOnNodePosition(Vector3 nodePosition)
     {
         Vector3 dir = nodePosition - transform.position;
@@ -141,6 +154,7 @@ public class Enemy : MonoBehaviour
         else return false;
     }
 
+    //ESta función sirve para ver si algo llegó a un nodo en especifico
     public void ReceiveAlert(Vector3 alertPos)
     {
         // No cambiar si ya lo está persiguiendo
@@ -149,6 +163,7 @@ public class Enemy : MonoBehaviour
         Debug.Log(name + " recivió alerta para ir hacia el nodo " + _toPatrol);
     }
 
+    //Con esto podemos visualizar los rangos de de busqueda
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
